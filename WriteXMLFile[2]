@@ -1,0 +1,170 @@
+import java.io.File;
+import java.util.ArrayList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.util.Vector;
+
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+public class WriteXMLFile extends ParserConfigurationException {
+
+  Vehicle[] v_obj;
+  Vector path = new Vector();
+  int v_id;
+
+  // private Document doc;
+
+  public WriteXMLFile() {
+
+  }
+
+  // Vehicle[] vehicle = (Vehicle[]) vehobject.get(i);
+
+  // ArrayList<Vector,int> a=new Arraylist<Vector,int>;
+
+  public WriteXMLFile(Vector path, int v_id) {
+  	this.path = path;
+  	this.v_id = v_id;
+  }
+
+  public void saveToXml() throws ParserConfigurationException {
+  	DocumentBuilderFactory docFactory = DocumentBuilderFactory
+  			.newInstance();
+  	DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+  	// Vehicle[] vehicle = (Vehicle[]) vehobject.get(i);
+
+  	try {
+
+  		// root elements
+  		Document doc = docBuilder.newDocument();
+  		Element rootElement = doc.createElement("VehiclePathData");
+  		doc.appendChild(rootElement);
+
+  		Element vehiclepath = doc.createElement("Vehicle");
+  		rootElement.appendChild(vehiclepath);
+
+  		// vehiclepath.setAttribute("id",
+  		// Integer.toString(v_obj[v_id].getV_id()));
+  		vehiclepath.setAttribute("id", Integer.toString(v_id));
+
+  		for (int ia = 0; ia < path.size(); ia++) {
+  			// vehicle elements
+
+  			GridSquare gs = (GridSquare) path.get(ia);
+
+  			// shorten way
+
+  			
+  			Element path = doc.createElement("path");
+  			path.appendChild(doc.createTextNode(gs.getX() + "," + gs.getY()));
+
+  			vehiclepath.appendChild(path);
+  		}
+
+  		TransformerFactory transformerFactory = TransformerFactory
+  				.newInstance();
+  		Transformer transformer = transformerFactory.newTransformer();
+  		DOMSource source = new DOMSource(doc);
+  		StreamResult result = new StreamResult(new File("J:\\filepath.xml"));
+
+  		transformer.transform(source, result);
+
+  		System.out.println("File saved!");
+
+  	}
+
+  	catch (TransformerException tfe) {
+  		tfe.printStackTrace();
+  	}
+
+  }
+
+  public WriteXMLFile(ArrayList<Vehicle> vehobject)
+  		throws ParserConfigurationException {
+
+  	DocumentBuilderFactory docFactory = DocumentBuilderFactory
+  			.newInstance();
+  	DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+  	// Vehicle[] vehicle = (Vehicle[]) vehobject.get(i);
+
+  	try {
+
+  		for (Vehicle veh : vehobject) {
+  			// root elements
+  			Document doc = docBuilder.newDocument();
+  			Element rootElement = doc.createElement("TrafficData");
+  			doc.appendChild(rootElement);
+
+  			//for (int i = 0; i < vehobject.size(); i++) {
+  				// vehicle elements
+  				System.out.println("numb of vehicles in list :"
+  						+ vehobject.size());
+
+  				// System.out.println(veh[i].getRoadobj()[i]);
+
+  				Element Vehicle = doc.createElement("Vehicle");
+  				rootElement.appendChild(Vehicle);
+
+  				// shorten way
+  				Vehicle.setAttribute("id", Integer.toString(veh.getV_id()));
+
+  				// vehicle type elements
+  				Element vehicletype = doc.createElement("Type");
+  				vehicletype
+  						.appendChild(doc.createTextNode(veh.getV_type()));
+  				Vehicle.appendChild(vehicletype);
+
+  				
+  				// vehicle entry pos elements
+  				Element entry_pos = doc.createElement("entry_pos");
+  				// entry_pos.appendChild(doc.createTextNode(vehicle.getEntry_pos().getX()
+  				// + "," + vehicle.getEntry_pos().getY()));
+  				entry_pos.appendChild(doc.createTextNode(veh.getEntry_pos()
+  						.getX() + "," + veh.getEntry_pos().getY()));
+  				Vehicle.appendChild(entry_pos);
+	Element exit_pos = doc.createElement("exit_pos");
+  				exit_pos.appendChild(doc.createTextNode(veh.getExit_pos()
+  						.getX() + "," + veh.getExit_pos().getY()));
+  				Vehicle.appendChild(exit_pos);
+
+  				// speed elements
+  				Element speed = doc.createElement("vehicleaveragespeed");
+  				// speed.appendChild(doc.createTextNode(Double.toString(vehicle.getV_curr_spd())));
+  				speed.appendChild(doc.createTextNode(Double.toString(veh
+  						.getV_avg_spd())));
+  				Vehicle.appendChild(speed);
+	Element behaviour = doc.createElement("vehiclebehaviour");
+  				// speed.appendChild(doc.createTextNode(Double.toString(vehicle.getV_curr_spd())));
+  				behaviour.appendChild(doc.createTextNode(veh
+  						.getV_behavior()));
+  				Vehicle.appendChild(behaviour);
+  			//}
+
+  			TransformerFactory transformerFactory = TransformerFactory
+  					.newInstance();
+  			Transformer transformer = transformerFactory.newTransformer();
+  			DOMSource source = new DOMSource(doc);
+  			StreamResult result = new StreamResult(new File("J:\\file.xml"));
+
+  			transformer.transform(source, result);
+
+  			System.out.println("File saved1!");
+
+  		}
+  	}
+
+  	catch (TransformerException tfe) {
+  		tfe.printStackTrace();
+  	}
+  }
+}
