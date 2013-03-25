@@ -1,0 +1,54 @@
+// GridSquare.java by Robin Hewit, 2005
+//  Represents one square on a grid map
+
+public class GridSquare {
+
+  int x, y;
+  boolean IsEmpty;
+  
+  public GridSquare()
+  {
+  	
+  }
+
+  public GridSquare(int x, int y,boolean IsEmpty) {
+  	this.x = x;
+  	this.y = y;
+  	this.IsEmpty=IsEmpty;	
+  	
+  	
+  }
+
+  public int getX() { return x; }
+  public int getY() { return y; }
+  public boolean getState() { return IsEmpty; }
+  
+  /*public boolean getState(int x,int y,Map m) 
+  { 
+  	
+  	for(int i=0;i<(m.nX*m.nY);i++)
+  	{
+  		if((m.pos[i].x==x) && (m.pos[i].y==y))
+  			IsEmpty=m.pos[i].IsEmpty;
+  			
+  	}
+  	return IsEmpty;
+  	 
+  }
+  public void setX(int x) { this.x=x; }
+  public void setY(int y) { this.y=y; }
+  
+  public void setState(boolean state,int x,int y,Map m) 
+  { 
+  	for(int i=0;i<(m.nX*m.nY);i++)
+  	{
+  		if((m.pos[i].x==x) && (m.pos[i].y==y))
+  			m.pos[i].IsEmpty=state;;
+  			
+  	}
+  }
+  */
+  
+  
+  
+}
