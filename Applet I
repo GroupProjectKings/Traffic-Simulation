@@ -1,0 +1,92 @@
+import java.applet.Applet;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+ 
+
+public class AppletGUI extends Applet {
+    
+        Test ob = new Test();
+      	 int x1=0;
+  	 int y1=0;
+  	 int[] veh_entryX = new int[10];
+  	 int[] veh_extryY = new int[10];
+  	 int[] veh_exitY  = new int[10];
+  	 int[] veh_exitX  = new int[10];
+
+
+public void init() 
+{
+  
+  setBackground( Color.black );
+
+}
+ 
+
+public void paint( Graphics g )
+{
+  setBackground( Color.black );
+  g.setColor(Color.blue);
+    
+   
+  for(int l=0;l<500;l=l+30)
+   {
+   		g.drawLine(l, 0, l, 500);
+   		g.drawLine(0, l, 500, l);
+   		
+   }   
+        for(int i=0; i<4;i++)
+        {
+            	g.setColor( Color.WHITE );
+                   g.drawLine(ob.entryX[i]*30, ob.entryY[i]*30, ob.exitX[i]*30, ob.exitY[i]*30);
+         
+           
+  	if(ob.entryX[i]> ob.exitX[i])	
+           {
+           g.drawLine(ob.entryX[i]*30, (ob.entryY[i]+3)*30, ob.exitX[i]*30, (ob.exitY[i]+3)*30);
+           }
+           if(ob.entryX[i]<ob.exitX[i])
+           {
+           g.drawLine(ob.entryX[i]*30, (ob.entryY[i]-3)*30, ob.exitX[i]*30, (ob.exitY[i]-3)*30);
+           }
+           if(ob.entryY[i]> ob.exitY[i])	
+           {
+           g.drawLine((ob.entryX[i]-3)*30, ob.entryY[i]*30, (ob.exitX[i]-3)*30, ob.exitY[i]*30);
+          } 
+           if(ob.entryY[i]< ob.exitY[i])
+           {
+           g.drawLine((ob.entryX[i]+3)*30, ob.entryY[i]*30, (ob.exitX[i]+3)*30, ob.exitY[i]*30);
+           }
+         
+         g.setColor(Color.GREEN);
+         g.fillOval(ob.tposX[i]*30, ob.tposY[i]*30, 10, 10);
+         g.setColor(Color.ORANGE);
+         g.fillOval(ob.tposX[i]*30+9, ob.tposY[i]*30, 10, 10);
+         g.setColor(Color.RED);
+         g.fillOval(ob.tposX[i]*30+18, ob.tposY[i]*30, 10, 10);
+         
+         g.setColor(Color.CYAN);
+         g.fillOval(veh_entryX[i], veh_extryY[i], 15, 15);
+         
+        }
+ 
+      
+            
+}
+
+
+
+
+public void sendValues(int i,int x, int y, int x2, int y2) 
+{
+
+  veh_entryX[i]=x;
+  veh_extryY[i]=y;
+  veh_exitX[i]=x2;
+  veh_exitY[i]=y2;
+  
+}
+
+ 
+}
