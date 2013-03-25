@@ -1,0 +1,484 @@
+import java.awt.Color;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Random;
+import java.util.Vector;
+
+
+public class Vehicle implements Runnable {
+     public int v_id;
+     public static int number_of_vehicles=0;
+     public String v_type;
+     public Color cVeh;
+     public double v_width;
+     public double v_length;
+     public double v_min_gap;
+     public double v_acc;
+     public double v_decc;
+     public double v_curr_spd;
+     public double v_act_spd;
+     public GridSquare entry_pos;
+     public GridSquare exit_pos;
+     public GridSquare curr_pos;
+     public int lane_id;
+     
+     public Road[] r_upd;
+     public Traffic_Light[] t_upd;
+     public byte[][] map;
+     public GridSquare[] r_ex;
+     
+     public Vehicle[] v_obj=new Vehicle[80];
+     public static int vo=-1;
+     
+     Traffic_Light tf=new Traffic_Light();
+     Road rd=new Road();
+     int[] tf_id =new int[10];
+     String[] ax=new String[10];
+     GridSquare[] tf_pos=new GridSquare[10];
+     GridSquare[] sp_lmt_start_pos=new GridSquare[10];
+     GridSquare[] sp_lmt_end_pos=new GridSquare[10];
+     
+     
+     
+   public Vehicle(Vehicle v_upd)
+   {
+  	 try{
+  		 wait();
+  	 }catch(Exception e){ };
+  	 
+  	 v_id=v_upd.v_id;
+  	 System.out.println("thread hello");
+  	 v_obj[v_id]=v_upd;
+  	 System.out.println("thread hello done");
+  	 
+  	 //this.v_obj=v_obj;
+  	 System.out.println(v_obj[v_id].entry_pos.x);
+  	 System.out.println(v_obj[v_id].entry_pos.y);
+  	 System.out.println(v_obj[v_id].exit_pos.x);
+  	 System.out.println(v_obj[v_id].exit_pos.y);
+  	 
+   }
+  
+
+  //For Car
+     public Vehicle( String v_type, GridSquare entry_pos,GridSquare[] list_entry_pos,double v_act_spd,Road[] r_obj,Traffic_Light[] t_obj,byte[][] map,GridSquare[] r_ex)
+  {
+  	   System.out.println(list_entry_pos);
+   	   
+    v_id= ++number_of_vehicles; 
+   this.v_type=v_type;
+    cVeh=Color.blue;
+    v_width=0.25;
+    v_length=0.5;
+    v_min_gap=1;
+    v_acc=v_act_spd/4;
+    v_decc=v_act_spd/2;
+    v_curr_spd= v_act_spd;
+    this.v_act_spd=v_act_spd;
+      this.entry_pos=entry_pos;
+      
+      
+      //compute exit_pos
+     
+      //System.out.println(Map.class.)
+      	 
+      //System.out.println(entry_pos);
+      //GridSquare[] list_exit_pos=Exit_Pos(entry_pos,list_entry_pos);
+      //System.out.println(list_exit_pos);
+      
+      exit_pos=Exit_Pos(entry_pos,list_entry_pos, r_obj);
+      System.out.println(exit_pos.x);
+      System.out.println(exit_pos.y);
+      
+      this.r_upd=r_obj;
+      this.t_upd=t_obj;
+      this.map=map;
+      this.r_ex=r_ex;
+      System.out.println(r_obj.length);
+      System.out.println(r_upd.length);
+      System.out.println("exit cons");
+      
+  }
+     
+     
+     public Vehicle() {
+  	// TODO Auto-generated constructor stub
+  }
+
+
+  public void run() {
+  	   System.out.println("Hello" + v_obj[v_id].v_id);
+  	   System.out.println("Hello" + v_obj[v_id].v_type);
+  	   System.out.println(v_obj[v_id].entry_pos.x);
+  	   System.out.println(v_obj[v_id].entry_pos.y);
+  	   //System.out.println(entry_pos.x);
+  	   System.out.println(v_obj[v_id].r_upd.length);
+  	   
+  	   
+  	   findRoute(v_obj[v_id].map,v_obj[v_id].r_upd,v_obj[v_id].t_upd,v_obj[v_id].r_ex);
+  	   
+  	   
+     	
+     }
+
+
+     
+     
+
+
+
+public GridSquare Exit_Pos(GridSquare entry_pos,GridSquare[] list_entry_ps,Road[] r_obj)
+{
+
+  int j=0;	
+  System.out.println("Entering exit_pos loop");
+  System.out.println(list_entry_ps[0].x);
+  System.out.println(list_entry_ps.length);
+  GridSquare[] list_exit_ps=new GridSquare[(list_entry_ps.length-1)*2];
+  System.out.println(list_exit_ps.length);
+  int len;
+  String ax;
+    Random r=new Random();
+  
+  	for(int i=0;i<list_entry_ps.length;i++)
+   {
+  		System.out.println("hello");
+      if(list_entry_ps[i].getX()!=entry_pos.getX() || list_entry_ps[i].getY()!=entry_pos.getY())
+  	{ 	
+      	
+      	if(j<list_exit_ps.length)
+      	{
+  		//System.out.println("Entered while loop for" + i + "time");
+  		//System.out.println(list_entry_ps[i].getX());
+  		//System.out.println(r_obj[i].axis);
+  		//if(r_obj[i].axis=="x")
+  		//{				
+  			//System.out.println("entered if");
+  			
+  			list_exit_ps[j]=new GridSquare((r_obj[i].road_coordinates_3[0].getX()),(r_obj[i].road_coordinates_3[0].getY()),list_entry_ps[i].getState());
+  			j++;
+  			list_exit_ps[j]=new GridSquare((r_obj[i].road_coordinates_4[0].getX()),(r_obj[i].road_coordinates_4[0].getY()),list_entry_ps[i].getState());
+  			j++;
+  		//}
+  		//else
+  		/*{
+  			System.out.println("entered else");
+  			System.out.println(list_entry_ps[i].x);
+  			System.out.println(list_entry_ps[i].y);
+  			
+  			list_exit_ps[j]=new GridSquare((list_entry_ps[i].getX()-2),list_entry_ps[i].getY(),list_entry_ps[i].getState());
+  			j++;
+  			list_exit_ps[j]=new GridSquare((list_entry_ps[i].getX()-3),list_entry_ps[i].getY(),list_entry_ps[i].getState());
+  			j++;
+  			
+  			//list_exit_ps[j]=new GridSquare(list_entry_ps[i].getX(),list_entry_ps[i].getY(),list_entry_ps[i].getState());
+  			//list_exit_ps[j]=new GridSquare((list_entry_ps[i].getX()),(list_entry_ps[i].getY()),list_entry_ps[i].getState());
+  			//j++;
+  			//System.out.println(list_exit_ps[j].x);
+  			//System.out.println(list_exit_ps[j].y);
+  			//list_exit_ps[j]=new GridSquare((list_entry_ps[i].getX()-3),(list_entry_ps[i].getY()-3),list_entry_ps[i].getState());
+  			//list_exit_ps[i].setX(list_entry_ps[i].getX());
+  			//list_exit_ps[i].x=list_entry_ps[i].getX();
+  			//System.out.println(list_exit_ps[j].x);
+  			//System.out.println(list_exit_ps[j].y);
+  			//j++;
+  		} */
+      }
+  		//list_exit_ps[i].y=list_entry_ps[i].getY();			
+  	}
+  }
+  	len=list_exit_ps.length;
+     // System.out.println(r.nextInt(len-1));
+     // System.out.println(list_exit_ps[r.nextInt(len-1)]);
+  	return list_exit_ps[r.nextInt(len-1)];
+}
+
+
+
+/*
+  public GridSquare Select_Exit_Pos(GridSquare entry_pos,GridSquare[] list_entry_ps)
+ 
+{
+  GridSquare[] list_exit_pos=new GridSquare[list_entry_ps.length];
+  list_exit_pos=Exit_Pos(entry_pos,list_entry_ps);
+  System.out.println(list_exit_pos[0]);
+  System.out.println(list_exit_pos.length);
+    int len=list_exit_pos.length;
+    Random r=new Random();
+    System.out.println(r.nextInt(len));
+    exit_pos=list_exit_pos[r.nextInt(len)];
+    System.out.println(list_exit_pos[0]);
+    
+    return exit_pos;
+}
+
+*/
+
+//These entry and exit positions are passed to A * algo to find path
+
+public void findRoute(byte[][] map,Road[] r_obj,Traffic_Light[] t_obj,GridSquare[] r_ex)
+{
+  //System.out.println(map[1][1]);
+  
+  System.out.println(v_obj[v_id].entry_pos.x);
+  System.out.println(v_obj[v_id].entry_pos.y);
+  System.out.println(v_obj[v_id].exit_pos.x);
+  System.out.println(v_obj[v_id].exit_pos.y);
+  System.out.println(r_obj.length);
+  //System.out.println(entry_pos);
+  
+  	//byte[][] mp=m1.createMap();
+  //System.out.println(mp[1][1]);
+  AstarGridSearcher searcher=new AstarGridSearcher(map,50,50);
+  System.out.println("welcome");
+//Vector path = searcher.search(new GridSquare(entry_pos.getX(),entry_pos.getY(),entry_pos.getState()),new GridSquare(exit_pos.getX(),exit_pos.getY(),exit_pos.getState()));
+
+
+
+GridSquare[] road_c1 = null;
+GridSquare[] road_c2=null;
+GridSquare[] road_c3=null;
+GridSquare[] road_c4=null;
+GridSquare[] total_rc;
+int l1 = 0,l2=0,l3=0,l4=0;
+
+
+
+ //curr_pos=entry_pos;  
+
+for(int r=0;r<r_obj.length;r++)
+{
+  
+  
+  if (((v_obj[v_id].entry_pos.getX() == r_obj[r].road_coordinates_1[0].getX()) && (v_obj[v_id].entry_pos.getY() == r_obj[r].road_coordinates_1[0].getY())) || (v_obj[v_id].entry_pos.getX() == r_obj[r].road_coordinates_2[0].getX()) && (v_obj[v_id].entry_pos.getY() == r_obj[r].road_coordinates_2[0].getY()))
+  {
+  	  ax[v_id]=r_obj[r].axis;
+        tf_id[v_id]=r_obj[r].traffic_light_id;
+        sp_lmt_start_pos[v_id]=r_obj[r].speed_limit_pos_start;
+        sp_lmt_end_pos[v_id]=r_obj[r].speed_limit_pos_end;
+         l1=r_obj[r].road_coordinates_1.length;
+         System.out.println("length 1 is" +l1);
+        road_c1=new GridSquare[l1];
+        for(int rc1=0;rc1<l1;rc1++)
+        {
+        road_c1[rc1]=r_obj[r].road_coordinates_1[rc1];
+        }
+        
+         l2=r_obj[r].road_coordinates_2.length;
+         System.out.println("length 2 is" +l2);
+         road_c2=new GridSquare[l2];
+         for(int rc2=0;rc2<l2;rc2++)
+  	      {
+  	      road_c2[rc2]=r_obj[r].road_coordinates_2[rc2];
+  	      }
+        
+        
+     }
+  
+  if (((v_obj[v_id].exit_pos.getX() == r_obj[r].road_coordinates_3[0].getX()) && (v_obj[v_id].exit_pos.getY() == r_obj[r].road_coordinates_3[0].getY())) || (v_obj[v_id].exit_pos.getX() == r_obj[r].road_coordinates_4[0].getX()) && (v_obj[v_id].exit_pos.getY() == r_obj[r].road_coordinates_4[0].getY()))
+  {
+  	  
+         l3=r_obj[r].road_coordinates_3.length;
+         System.out.println("length 3 is" +l3);
+         road_c3=new GridSquare[l3];
+         for(int rc3=0;rc3<l3;rc3++)
+  	      {
+  	      road_c3[rc3]=r_obj[r].road_coordinates_3[rc3];
+  	      }
+        
+         l4=r_obj[r].road_coordinates_4.length;
+         System.out.println("length 4 is" +l4);
+        road_c4=new GridSquare[l4];
+        for(int rc4=0;rc4<l4;rc4++)
+        {
+        road_c4[rc4]=r_obj[r].road_coordinates_4[rc4];
+        }
+       
+        
+     }
+}
+//insert all road coordinates into one GridSquare array
+
+  
+  int l5=0;
+  
+  while(r_ex[l5]!=null)
+    l5++;
+  
+  System.out.println("length 5 is" +l5);
+  total_rc=new GridSquare[l1+l2+l3+l4+l5];
+  System.out.println(total_rc.length);
+  
+  //total_rc=Arrays.copyOf(road_c1, l1);
+  //total_rc=Arrays.copyOf(road_c2, l1+l2);
+  
+  //total_rc=Arrays.copyOf(road_c1, l1);
+  //total_rc=Arrays.copyOf(road_c1, l1);
+  
+  
+  for(int rc=0;rc<l1;rc++)
+  {
+  total_rc[rc]=road_c1[rc];
+  }
+  
+  for(int rc=l1;rc<(l1+l2);rc++)
+  {
+  total_rc[rc]=road_c2[rc-l1];
+  }
+  
+  for(int rc=(l1+l2);rc<(l1+l2+l3);rc++)
+  {
+  total_rc[rc]=road_c3[rc-(l1+l2)];
+  }
+  
+  for(int rc=(l1+l2+l3);rc<(l1+l2+l3+l4);rc++)
+  {
+  total_rc[rc]=road_c4[rc-(l1+l2+l3)];
+  }
+  
+  for(int rc=(l1+l2+l3+l4);rc<(l1+l2+l3+l4+l5);rc++)
+  {
+  	total_rc[rc]=r_ex[rc-(l1+l2+l3+l4)];
+  }
+  
+  
+  
+
+for(int t=0;t<t_obj.length;t++)
+{
+  //System.out.println(tf_id);
+  if (tf_id[v_id] ==t_obj[t].traffic_light_id)
+  	 tf_pos[v_id]=t_obj[t].traffic_light_pos;
+  //System.out.println(tf_pos.x);
+  //System.out.println(tf_pos.y);
+}
+
+Vector path=searcher.search(v_obj[v_id].entry_pos,v_obj[v_id].exit_pos,total_rc);
+
+System.out.println(path.size());
+v_obj[v_id].curr_pos=(GridSquare)path.get(0);
+
+
+//System.out.println(v_obj[v_id].curr_pos.getX());
+//System.out.println(v_obj[v_id].curr_pos.getY());
+
+for(int i=0; i<path.size(); i++) {
+GridSquare sq = (GridSquare)path.get(i);
+System.out.println("entering for for" +i+ "time");
+System.out.println(v_obj[v_id].curr_pos.x);
+System.out.println(v_obj[v_id].curr_pos.y);
+System.out.println(v_obj[v_id].exit_pos.x);
+System.out.println(v_obj[v_id].exit_pos.y);
+//System.out.println(path.size());
+//System.out.println(sq.getX());
+//System.out.println(sq.getY());
+
+if ((v_obj[v_id].curr_pos.getX()!=v_obj[v_id].exit_pos.getX()) || (v_obj[v_id].curr_pos.getY()!=v_obj[v_id].exit_pos.getY()))
+{  
+  //System.out.println("entering if");
+   if ((sq.getX()==v_obj[v_id].curr_pos.getX()) && (sq.getY()==v_obj[v_id].curr_pos.getY()))
+ {
+     GridSquare sq1=(GridSquare)path.get(i+1);
+     
+     		   
+     
+     for(int mx=0;mx<path.size();mx++)
+     {
+  	   //System.out.println("Path" + mx + "reached");
+  	   //GridSquare s=(GridSquare)path.get(mx);
+  	   //System.out.println(s.getX());
+  	   //System.out.println(s.getY());
+     }
+ 
+        //GridSquare adj_pos= new GridSquare(sq1.getX()+ 0.5,sq1.getY()+0.5);
+       // adj_pos.x=(int)(sq1.getX()+ 0.5);
+        //adj_pos.y=(int)(sq1.getY()+0.5);
+     
+  // check for speed_limit and traff_light here!!!
+   if (rd.spd_Limit_Check(v_obj[v_id].curr_pos,sp_lmt_start_pos[v_id],sp_lmt_end_pos[v_id],ax[v_id])=="dec")
+   {
+  	 System.out.println("vehicle should decelerated");
+  	 v_obj[v_id].v_curr_spd=v_obj[v_id].v_curr_spd - v_obj[v_id].v_decc;
+   }
+   
+    if (rd.spd_Limit_Check(v_obj[v_id].curr_pos,sp_lmt_start_pos[v_id],sp_lmt_end_pos[v_id],ax[v_id])=="acc")
+   {
+  	 System.out.println("vehicle should accelerate");
+  	 v_obj[v_id].v_curr_spd=v_obj[v_id].v_curr_spd + v_obj[v_id].v_decc;
+   }
+   
+     
+     
+        
+     
+    while (tf.Traffic_Check(v_obj[v_id].curr_pos,tf_pos[v_id],tf_id[v_id],ax[v_id]))
+    {
+  	  //stop vehicle
+  	  v_obj[v_id].v_curr_spd=0;
+  	  System.out.println("Vehicle at traffic light" +tf_id[v_id]);
+  	  
+  	  try {
+              Thread.sleep(100);
+              System.out.println("thread sleeping");
+          } catch(InterruptedException ex) {
+              Thread.currentThread().interrupt();
+          }
+  	  
+    }
+    
+         //check adjacent lane as well
+    
+    while(sq1.getState()!=true)
+    {
+  	  try {
+              Thread.sleep(1000);
+              System.out.println(" vehicle thread sleeping coz of state not empty");
+          } catch(InterruptedException ex) {
+              Thread.currentThread().interrupt();
+          }
+    }
+     
+          System.out.println("vehicle thread out of sleep. will continue now");
+          v_obj[v_id].curr_pos.x=sq1.getX();
+          v_obj[v_id].curr_pos.y=sq1.getY();
+         
+            sq.IsEmpty=true;
+            sq1.IsEmpty=false;
+            System.out.println(sq.getState());
+            System.out.println(sq1.getState());
+            
+            System.out.println(v_obj[v_id].curr_pos.x);
+            System.out.println(v_obj[v_id].curr_pos.y);
+            
+           
+              
+                   
+          //need to sleep for a while and check if condition again!!!
+              //movement class               
+              					    						    	
+  }
+
+}
+else
+{
+  System.out.println("Goal reached!!!");
+}
+
+
+}
+
+
+}
+}
+
+
+
+
+
+
+
+
+
+
+
+
