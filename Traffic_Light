@@ -1,0 +1,261 @@
+import java.sql.Time;
+import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.Queue;
+
+
+
+public class Traffic_Light implements Runnable {
+
+  public int traffic_light_id;
+  public static int number_of_traffic_lgts=0;
+  public GridSquare traffic_light_pos;
+  public String state;
+  public static String[] state_upd;
+  public int trf_light_green_timing;
+  Thread trf;
+  
+  
+  int pauss;
+  int fl=0;
+  
+  Queue<Traffic_Light>q=new LinkedList<Traffic_Light>();
+  Traffic_Light[] tf_update;
+  
+  
+
+  public Traffic_Light(Queue<Traffic_Light> q,int size,Traffic_Light[] t_obj)
+  {
+     this.q=q;
+     tf_update=t_obj;
+     state_upd=new String[size];
+;  }
+  
+  public Traffic_Light( int trf_id, GridSquare trf_pos)
+  {
+  	//System.out.println("const traffic");
+  	traffic_light_id = ++number_of_traffic_lgts;
+  	traffic_light_pos = trf_pos;
+  	state="Red";
+  	trf_light_green_timing=5000;
+  	//trf_light_green_timing= trf_light_green_timing.getInstance();
+  	//trf_light_green_timing.set(Calendar.SECOND,5000);
+  	
+  		
+  	
+      
+
+
+  	//traffic_light_curr_state = "Red, Amber, Green";
+  	//System.out.println("const traffic");
+  	
+  	}
+  
+  public Traffic_Light() {
+  	
+  }
+
+  public void run()
+  {
+  	System.out.println("queue traffic");
+  	//System.out.println(tf_update[0].state);
+  	//System.out.println(tf_update[1].state);
+  			
+  	while(!q.isEmpty())
+  	{
+  		//System.out.println("queue not empty");
+  		    if (q.element().state=="Red"){
+  	                      q.element().state="Green";
+  	                      pauss=trf_light_green_timing;
+  	                  }
+  	                 
+  		    try {
+  		    	//System.out.println(q.element().state);
+  			Thread.sleep(pauss);
+  			for(int tb=0;tb<tf_update.length;tb++)
+  			 {
+  				if (q.element().traffic_light_id==tf_update[tb].traffic_light_id)
+  					tf_update[tb].state=q.element().state;
+  				
+  			 }
+  			
+  			for(int fl=0;fl<tf_update.length;fl++)
+  			{
+  			state_upd[fl]=tf_update[fl].state;
+  			//System.out.println(state_upd[fl]);
+  			}
+  			
+  			
+  			
+  			//System.out.println(tf_update[0].state);
+  			//System.out.println(tf_update[1].state);
+  			//check for dynamic function which returns busy traffic light
+  		    } catch (InterruptedException e) {
+  			
+  		    }
+  		   
+  		    //after the pauss
+  		    q.element().state="Red";
+  		    for(int tb=0;tb<tf_update.length;tb++)
+  			 {
+  				if (q.element().traffic_light_id==tf_update[tb].traffic_light_id)
+  					tf_update[tb].state=q.element().state;
+  			 }
+  		    q.add(q.remove());
+  		    
+  		    
+  		
+  			 }
+  	
+  	
+  		
+  }
+  
+   public boolean Traffic_Check(GridSquare v_curr_pos,GridSquare trf_pos,int trf_id,String axis)
+   {
+  	 //System.out.println(v_curr_pos.x);
+  	 //System.out.println(v_curr_pos.y);
+  	 //System.out.println(trf_pos.x);
+  	 //System.out.println(trf_pos.y);
+  	// System.out.println(state_upd[0]);
+  	// System.out.println(state_upd[1]);
+  	 
+  	// System.out.println(q.element().state);
+  	 System.out.println("entering traffic check");
+  	 
+  	 if(axis=="xi")
+  	 {
+  		 System.out.println("entered traffic if for x axis");
+  		 if(((v_curr_pos.getX()==trf_pos.getX()) && (v_curr_pos.getY()+1==trf_pos.getY())) || ((v_curr_pos.getX()==trf_pos.getX()) && (v_curr_pos.getY()+2==trf_pos.getY())))
+  		 {
+  			 System.out.println("check state");
+  			 //System.out.println(q.element().state);
+  			   //check for state of traffic light ( if trf_id is not first element in queue, vehicle should stop
+  				try { Thread.sleep(pauss); }
+  				catch(Exception e) { };
+  				
+  				for(int tb=0;tb<state_upd.length;tb++)
+  				 {
+  					//System.out.println("entr for");
+  					//System.out.println(state_upd[tb]);
+  														
+  			     if (trf_id==(tb+1))
+  			   {
+  				 if(state_upd[tb]=="Red")
+  				 {
+  				 System.out.println("light to red");
+  				 return true; //vehicle should stop
+  				 }
+  							 
+  			 }
+  			 
+  			    		 
+  		 }				 
+  			
+  				 
+  	 }
+  		 
+ }
+  	 else if(axis=="xd")
+  	 {
+  		 System.out.println("entered traffic if for negetive x axis");
+  		 if(((v_curr_pos.getX()==trf_pos.getX()) && (v_curr_pos.getY()-1==trf_pos.getY())) || ((v_curr_pos.getX()==trf_pos.getX()) && (v_curr_pos.getY()-2==trf_pos.getY())))
+  		 {
+  			 System.out.println("check state");
+  			 //System.out.println(q.element().state);
+  			   //check for state of traffic light ( if trf_id is not first element in queue, vehicle should stop
+  				try { Thread.sleep(pauss); }
+  				catch(Exception e) { };
+  				
+  				for(int tb=0;tb<state_upd.length;tb++)
+  				 {
+  					//System.out.println("entr for");
+  					//System.out.println(state_upd[tb]);
+  														
+  			     if (trf_id==(tb+1))
+  			   {
+  				 if(state_upd[tb]=="Red")
+  				 {
+  				 System.out.println("light to red");
+  				 return true; //vehicle should stop
+  				 }
+  							 
+  			 }
+  			 
+  			    		 
+  		 }				 
+  			
+  				 
+  	 }
+  	 }
+  	 else if (axis=="yi")
+  	 {
+  		 System.out.println("entered traffic if for y axis");
+  		 if(((v_curr_pos.getX()+1)==trf_pos.getX() && (v_curr_pos.getY()==trf_pos.getY())) ||((v_curr_pos.getX()+2)==trf_pos.getX() && (v_curr_pos.getY()==trf_pos.getY())))
+  		 {
+  			  //check for state of traffic light ( if trf_id is not first element in queue, vehicle should stop
+  			 System.out.println("check state");
+  		 //System.out.println(q.element().state);
+  		   //check for state of traffic light ( if trf_id is not first element in queue, vehicle should stop
+  			try { Thread.sleep(pauss); }
+  			catch(Exception e) { };
+  			
+  			for(int tb=0;tb<state_upd.length;tb++)
+  			 {
+  													
+  		     if (trf_id==(tb+1))
+  		 {
+  			 if(state_upd[tb]=="Red")
+  			 {
+  			 System.out.println("light to red");
+  			 return true; //vehicle should stop
+  			 }
+  			
+  		 }
+  		 
+  				 
+  	 }
+  		 }
+  		 
+  	 }
+  	 else if(axis=="yd")
+  	 {
+  		 System.out.println("entered traffic if for y axis");
+  		 if(((v_curr_pos.getX()-1)==trf_pos.getX() && (v_curr_pos.getY()==trf_pos.getY())) || ((v_curr_pos.getX()-2)==trf_pos.getX() && (v_curr_pos.getY()==trf_pos.getY())))
+  		 {
+  			  //check for state of traffic light ( if trf_id is not first element in queue, vehicle should stop
+  			 System.out.println("check state");
+  		 //System.out.println(q.element().state);
+  		   //check for state of traffic light ( if trf_id is not first element in queue, vehicle should stop
+  			try { Thread.sleep(pauss); }
+  			catch(Exception e) { };
+  			
+  			for(int tb=0;tb<state_upd.length;tb++)
+  			 {
+  													
+  		     if (trf_id==(tb+1))
+  		 {
+  			 if(state_upd[tb]=="Red")
+  			 {
+  			 System.out.println("light to red");
+  			 return true; //vehicle should stop
+  			 }
+  			
+  		 }
+  		 
+  				 
+  	 }
+  		 }
+  		 
+  		
+  	 
+   }
+  	 return false;
+   }
+}
+  
+  
+
+      
+
+  
