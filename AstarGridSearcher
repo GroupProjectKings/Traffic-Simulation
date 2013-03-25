@@ -1,0 +1,316 @@
+
+
+import java.util.Vector;
+
+
+public class AstarGridSearcher {
+
+  byte[][] map;
+  byte[][] flagMap;
+  int nX, nY;
+  int t;
+  Vector fringe = new Vector();
+  
+
+  GridSquare start, goal;
+  GridSquare[] total;
+  
+  FringeNode endNode;
+
+  ///////////////////////////////////
+  // Constructor
+  //
+  public AstarGridSearcher(byte[][] map,int nX,int nY) {
+  	System.out.println("hi");
+  	this.map = map;
+  	this.nX = nX;
+  	this.nY = nY;
+  	flagMap = new byte[nX][nY];
+  	
+  }
+
+  ///////////////////////////////////
+  // search(), the public search method
+  //
+  public Vector search (GridSquare start, GridSquare goal,GridSquare[] total) 
+  {
+  	//System.out.println("hi");
+  	Vector path = new Vector();
+  	fringe.removeAllElements();
+  	this.start = start;
+  	this.goal = goal;
+  	this.total=total;
+  	//System.out.println(total.length);
+  	/*
+  	int t=0;
+  	
+  	while(total[t]!=null)
+  	t++;
+  	System.out.println(t);
+  	*/
+  	
+  /*	for(int t=0;t<total.length;t++)
+  	{
+  		System.out.println(total[t].x);
+  		System.out.println(total[t].y);
+  	}
+  */	
+  	
+  			
+
+  	// reset the flag map
+  	for(int y=0; y<nY; y++)
+  		for(int x=0; x<nX; x++)
+  		{
+  		
+  		//System.out.println("entered for loop");
+  			flagMap[x][y] = map[x][y];
+  		}
+
+  	// search
+  	
+  	
+  	fringe.add( new FringeNode(null, start, goal) );
+  	
+  	
+  	
+  	if( findPath() ) {
+  		FringeNode node = endNode;
+  		
+  		while( null != node ) {
+  			//System.out.println("path node");
+  			path.insertElementAt(node, 0);
+  			node = node.parent;
+  			//System.out.println(path.size());
+  		}
+  	}
+
+  	return path;
+  }
+
+  ///////////////////////////////////
+  // findPath()
+  //
+  // Recursive function that looks at the first
+  // node on the fringe.
+  //
+  boolean findPath() {
+  	
+  	if( fringe.isEmpty() ) { System.out.println("no elements in fringe"); return false;}
+
+  	System.out.println("fringe");
+  	FringeNode node = (FringeNode)fringe.remove(0);
+  	System.out.println(node.x);
+  	System.out.println(node.y);
+  	
+  	if( isGoal(node) ) {
+  		endNode = node;
+  		System.out.println("end node reached");
+  		return true;
+  	}
+
+  	//if node isn't closed, add its children to the fringe
+  	if( 0 != flagMap[node.getX()][node.getY()] ) {
+  		
+  		flagMap[node.getX()][node.getY()] = 0;
+  		addChildrenToFringe(node);
+  	}
+  	return findPath();
+  }
+
+  ///////////////////////////////////
+  // addChildrenToFringe()
+  //
+  void addChildrenToFringe(FringeNode parent) {
+  	//System.out.println("add children to fringe");
+  	int x = parent.getX();
+  	int y = parent.getY();
+  	boolean state=parent.getState();
+  			
+  	
+  	
+  	
+  	
+
+  	for(int dx=-1; dx<=1; dx++)
+  		for(int dy=-1; dy<=1; dy++)  {
+  			int childX = x+dx;
+  			int childY = y+dy;
+  			if(childX<0) childX=0;
+  			if(childY<0) childY=0;
+  			//System.out.println(childX);
+  			//System.out.println(childY);
+  			
+  			
+  			for(int tc=0;tc<total.length;tc++)
+  			{
+  				if((childX==total[tc].getX()) && (childY==total[tc].getY()))
+  				{
+  			
+  			    if( 0 != flagMap[childX][childY] && 0 != map[childX][childY] )
+  			    {
+  				
+  				
+  				if( (goal.getX()==childX) && (goal.getY()==childY) ) {
+  					
+  					GridSquare sq = new GridSquare(childX, childY,state);
+  					addToFringe(new FringeNode(parent,sq,goal));
+  												
+  				}
+  				
+  				if(((childX!=x && childY==y)) || ((childX==x && childY!=y)))
+  				{
+  					//setting the flag
+  					
+  					
+  					
+  					
+  					GridSquare sq = new GridSquare(childX, childY,state);
+  					addToFringe(new FringeNode(parent,sq,goal));
+  												
+  					
+  					//GridSquare sq1 = new GridSquare(childX, childY,state);
+  					//double f=FringeNode.computeDist(parent,goal);
+  					//double f1=FringeNode.computeDist(sq1,goal);					
+  					
+  						
+  					}
+  				}
+  				}					 						 
+  														
+  				}
+  			}
+  	
+  }
+  
+/*
+  ////////////////////////////////////
+  // diagonalIsClear()
+  //
+  // When moving along a diagonal, verify that adjacent squares
+  // to the sides are clear. Otherwise the robot might partially
+  // enter an obstructed square. This is not allowed.
+  //
+  boolean diagonalIsClear(FringeNode parent, int dx, int dy)
+  {
+  	if(0==dy || 0==dx)
+  		return true; // move isn't along a diagonal
+  
+  	if( 0 == map[parent.getX()-1][parent.getY()] )
+  		if( -1 == dx )
+  			return false;
+  
+  	if( 0 == map[parent.getX()+1][parent.getY()] )
+  		if( 1 == dx )
+  			return false;
+  
+  	if( 0 == map[parent.getX()][parent.getY()-1] )
+  		if( -1 == dy )
+  			return false;
+  
+  	if( 0 == map[parent.getX()][parent.getY()+1] )
+  		if( 1 == dy )
+  			return false;
+  
+  	return true;
+  }
+  */
+
+///////////////////////////////////
+// addToFringe()
+//
+// Adds one node to the fringe, keeping the fringe
+// ordered by actPlusL2Dist.
+//
+ void addToFringe(FringeNode node) {
+   //System.out.println("add to fringe entered");
+  	//System.out.println(node.x);
+  	//System.out.println(node.y);
+  	
+ if( fringe.isEmpty() ) {
+   //System.out.println("fringe initially empty");
+   
+   fringe.add(node);
+   
+   //System.out.println(node.x);
+   //System.out.println(node.y);
+   
+   //double f = FringeNode.computeDist(node,goal);
+   
+} else {
+  //System.out.println("else entered");
+double f = FringeNode.computeDist(node,goal);
+double f1=FringeNode.computeDist((FringeNode)fringe.get(0),goal);
+//System.out.println(f);
+//System.out.println(f1);
+
+if( f < f1 ) {
+  fringe.remove(0);
+  fringe.insertElementAt(node, 0);
+//System.out.println(fringe.size());
+return;
+}
+}
+//System.out.println("insert node");
+//fringe.insertElementAt(node, fringe.size());
+}
+
+
+  ///////////////////////////////////
+  // isGoal(), checks to see if a node is the goal
+  //
+  boolean isGoal(FringeNode node)
+  { return (node.getX() == goal.getX() && node.getY() == goal.getY()); }
+}
+
+
+///////////////////////////////////
+// FringeNode class
+//
+class FringeNode extends GridSquare {
+
+  public FringeNode parent;
+  public double actDist;
+  public double actPlusL2Dist;
+
+  ///////////////////////////////////
+  // Constructor
+  //
+  public FringeNode
+  (FringeNode parent, GridSquare sq, GridSquare goal){
+  	super(sq.x, sq.y,sq.IsEmpty);
+  	this.parent = parent;
+  	if(parent != null)
+  	{
+  		actDist = parent.actDist + computeDist(this, parent);
+  		if(null != parent.parent)
+  		{
+  			// if the path has changed directions, add a 0.5 turn penalty
+  			FringeNode grandparent = parent.parent;
+  			int dx1 = grandparent.getX() - parent.getX();
+  			int dx2 = parent.getX() - this.getX();
+  			if(dx1 != dx2)
+  				actDist += 0.5;
+  			else {
+  				int dy1 = grandparent.getY() - parent.getY();
+  				int dy2 = parent.getY() - this.getY();
+  				if(dy1 != dy2) actDist += 0.5;
+  			}
+  		}
+  	}
+  	else
+  		actDist = 0;
+  	actPlusL2Dist = actDist + computeDist(this, goal);
+  }
+
+  ///////////////////////////////////
+  // computeDist()
+  //
+  // computes the linear distance between two grid-map squares
+  //
+  static double computeDist(GridSquare node1, GridSquare node2) {
+  	double dx = node1.getX() - node2.getX();
+  	double dy = node1.getY() - node2.getY();
+  	return Math.sqrt(dx*dx + dy*dy);
+  }
+}
