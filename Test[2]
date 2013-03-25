@@ -1,0 +1,356 @@
+
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.ArrayList;
+
+
+public class Test {
+   
+  
+  public static void main(String args[]) {
+  	int nX=50;
+  	 int nY=50; 
+  	byte[][] map = new byte[nX][nY];
+  	Map  m1=new Map(map,nX,nY);
+  	 
+  		 int numR,numT=0;
+  		 int m=0;
+  		 Vehicle[] v_obj=new Vehicle[80];
+  		 ArrayList<Vehicle[]> items = new ArrayList<Vehicle[]>();
+  			WriteXMLFile xmlw;
+  	         
+  	 try {
+  	 System.out.println("Enter number of Roads:");
+  	 BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+  	 String numofRoad = br.readLine();
+  	 numR = Integer.parseInt(numofRoad);
+
+  	 int[] speedlimit=new int[numR];
+  	 GridSquare[] entry_pos=new GridSquare[numR];
+  	 GridSquare[] exit_pos=new GridSquare[numR];
+  	 GridSquare[] pos_T=new GridSquare[numR];
+  	 
+  	 Road[] r_obj=new Road[numR];
+  	 Traffic_Light[] t_obj=new Traffic_Light[numR];
+  	 Queue<Traffic_Light> queue=new LinkedList<Traffic_Light>();
+  	 Thread[] thr_upd=new Thread[50];
+  	 
+  	 m1.list_entry_ps=new GridSquare[numR];
+  	 m1.list_exit_ps=new GridSquare[numR];
+  	 		 
+  	 int[] tposX= new int[numR];
+  	 int[] tposY= new int[numR];
+  	 int[] entryX= new int[numR*2];
+  	 int[] entryY= new int[numR*2];
+  	 int[] exitX= new int[numR*2];
+  	 int[] exitY= new int[numR*2];
+  	 for(int i=0; i<numR;i++)
+  	 {
+  		 
+  	 System.out.println("Entry coordinate x&y value for the "+i+"/st/nd/th coordinate: ");
+  	 BufferedReader br1 = new BufferedReader(new InputStreamReader(System.in));
+  	 String x = br1.readLine();
+  	 //System.out.println(x);
+  	 
+  	// entry_pos[i].x=Integer.parseInt(x);
+  	 entryX[i]=Integer.parseInt(x);
+  	 x = br1.readLine();
+  	 //entry_pos[i].y=Integer.parseInt(x);
+  	 entryY[i]=Integer.parseInt(x);
+  	 //System.out.println(entry_pos[i].x);
+
+
+  	 System.out.println("Exit coordinate (x,y) value for the "+i+"/st/nd/th coordinate: ");
+  	 BufferedReader br2 = new BufferedReader(new InputStreamReader(System.in));
+  	 String y = br2.readLine();
+  	 
+  	 //exit_pos[i].x=Integer.parseInt(y);
+  	 exitX[i]=Integer.parseInt(y);
+  	 System.out.println(exitX[i]);
+  	 y = br2.readLine();
+  	 //exit_pos[i].y=Integer.parseInt(x);
+  	 exitY[i]=Integer.parseInt(y);
+  	
+
+   		      entry_pos[i]=new GridSquare(entryX[i],entryY[i],true);
+   		      exit_pos[i]=new GridSquare(exitX[i],exitY[i],true);
+   		      
+   		     
+  	          
+   		     m1.list_entry_ps[i]=entry_pos[i];
+         
+
+  	 System.out.println("Speed limit for "+i+"/st/nd/th ROAD: ");
+  	 BufferedReader br3 = new BufferedReader(new InputStreamReader(System.in));
+  	 String speedlim = br3.readLine();
+  	 speedlimit[i]=Integer.parseInt(speedlim);
+  	 
+  	 System.out.println("Traffic Light for "+i+"/st/nd/th ROAD: ");
+  	 BufferedReader br4 = new BufferedReader(new InputStreamReader(System.in));
+  	 String w = br4.readLine();
+  	 //System.out.println(x);
+  	 
+  	// entry_pos[i].x=Integer.parseInt(x);
+  	 tposX[i]=Integer.parseInt(w);
+  	 w = br4.readLine();
+  	 //entry_pos[i].y=Integer.parseInt(x);
+  	 tposY[i]=Integer.parseInt(w);
+  	 //System.out.println(entry_pos[i].x);
+  	 
+  	 pos_T[i]=new GridSquare(tposX[i],tposY[i],true);
+  	
+  	 
+  	 
+  	 //creating road objects for all roads
+  	
+  	  
+  	 Road r=new Road(i,speedlimit[i],entry_pos[i],exit_pos[i]);
+  	 r_obj[i]=r;
+  	 
+  	 //System.out.println(r_obj[i].traffic_light_id);
+  	 //System.out.println("traffic light");
+  	 //System.out.println("add to queue");
+  	 
+  	 
+  	 //(new Thread(new Traffic_Light())).run();
+  	 Traffic_Light tl=new Traffic_Light(i,pos_T[i]);
+  	 
+  	
+  	 
+  	 t_obj[i]=tl;
+  	 queue.add(t_obj[i]);
+  	 
+  		
+  	 //tl.run();
+  	 
+  	 //Thread t1=new Thread();
+  	 
+  	 //(new Thread(new Traffic_Light())).run();
+  	 
+  		
+  		
+  		 //while(!queue.isEmpty())
+  		// {
+  			 //System.out.println(queue.element());
+  			 //queue.remove();
+  		// }
+  		
+  		 
+  	 
+  	 //System.out.println("hi");
+  		 
+  		 //System.out.println(r_obj[i].speed_lmt);
+  		
+  		 //System.out.println("find road coordinates");
+  		 
+  				 
+  		 		 			 			 
+  	 }
+  	/* for(int w=0;w<r_obj[1].road_coordinates_4.length;w++)
+  	 {
+  	 System.out.println(r_obj[1].road_coordinates_4[w].getX());
+  	 System.out.println(r_obj[1].road_coordinates_4[w].getY());
+  	 }
+  	 */
+  	 
+  	 Thread t1=new Thread(new Traffic_Light(queue,numR,t_obj));
+  	 t1.start();
+  	 
+  	 //add objects from queue to t_obj
+  	/* 
+  	 for(int tb=0;tb<numR;tb++)
+  	 {
+  		 Traffic_Light tf=new Traffic_Light();
+  		 while(!tf.q.isEmpty())
+  		 {
+  		 if (tf.q.element().traffic_light_id==t_obj[tb].traffic_light_id)
+  		 {
+  			 System.out.println("entered tf");
+  			 System.out.println(tf.q.element().state);
+  		    t_obj[tb].state=tf.q.element().state;
+  		    tf.q.remove();
+  		 }
+  		 }
+  		 System.out.println(t_obj[tb].state);
+  		 	
+  	 }
+  	 */
+  	 
+  	 m1.createMap(r_obj);
+  		System.out.println("Map created");
+  		byte[][] mp=m1.showMap();
+  		GridSquare[] r_ex=m1.road_excl;
+  		
+  		
+  	/*	
+  		for(int re=0;re<r_ex.length;re++)
+  		{
+  			System.out.println(r_ex[re].x);
+  			System.out.println(r_ex[re].y);
+  			
+  		}
+  	*/
+  	 
+   
+  		//System.out.println("veh object created");
+  	 
+  	// add 2 vehicles to each road
+  		  while (m < 24)
+  			{
+  			  
+  			   int dc_spd=5;
+  				 int dt_spd=10;
+  		 
+  	 for(int r=0;r<numR;r++)
+  	 {
+  		 //int x=2;
+  		 
+  		// System.out.println("veh object created1");				 
+  	
+  		  //System.out.println(entry_pos[0].x);
+  		  //System.out.println(entry_pos[0].y);
+  		  int spd=40;
+  		 
+  		  
+  		Vehicle v1=new Vehicle("Car",entry_pos[r],m1.list_entry_ps,(spd+dc_spd),r_obj,t_obj,mp,r_ex);
+  			v_obj[m]=v1;
+  			m++;
+  			
+  			Vehicle v2=new Vehicle("Truck",entry_pos[r],m1.list_entry_ps,(spd+dt_spd),r_obj,t_obj,mp,r_ex);
+  			v_obj[m]=v2;
+  			m++;
+  			
+  				
+  		 dc_spd=dc_spd+5;
+  		 dt_spd=dt_spd+10;
+  		 
+  		// items.add(v_obj[m]);
+  	//	 System.out.println(items.get(m).v_id);
+  		 
+  				 		
+  	 }
+  	 //System.out.println("veh object created2");
+  	 				  
+  	 }
+  	 
+  	 //System.out.println("veh obj1");
+  	 Queue<Vehicle> veh_q=new LinkedList<Vehicle>();
+  	 //System.out.println(v_obj.length);
+  	 //System.out.println("veh obj1");
+  	 for(int vh=0;vh<1;vh++)
+  	 {
+  		 //System.out.println("veh object created3");
+  	 veh_q.add(v_obj[vh]);
+  	 }
+  	 
+  	 
+  	 
+  	
+  
+  	
+  
+  	
+  				 
+  		
+  	/*
+  			for(int v=0;v<(numR*2);v++)
+  			 {
+  				 System.out.println(v_obj[v].v_id);
+  				 System.out.println(v_obj[v].v_type);
+  				 System.out.println(v_obj[v].entry_pos.x);
+  				 System.out.println(v_obj[v].entry_pos.y);
+  				  v_obj[v].findRoute(mp,r_obj,t_obj); 
+  				  System.out.println("Next vehicle will enter after some time");
+  				  Thread.sleep(1000);
+  				  System.out.println("route completed");
+  			}
+  		
+  	*/
+  	 
+  	//add road coordinates to map and mark them open
+  		
+  /*	
+  	
+  	 System.out.println(v_obj[0].v_id);
+  	 System.out.println(v_obj[0].v_type);
+  	 System.out.println(v_obj[0].entry_pos.x);
+  	 System.out.println(v_obj[0].entry_pos.y);
+  	 System.out.println(v_obj[0].exit_pos.x);
+  	 System.out.println(v_obj[0].exit_pos.y);
+  	 System.out.println(mp[6][7]);
+  	 System.out.println(mp[5][6]);
+  	 System.out.println(mp[5][13]);
+  	 System.out.println(mp[6][13]);
+  	 
+  	  v_obj[0].findRoute(mp,r_obj,t_obj); 
+  	  
+  	*/
+  	 
+  	 //call threads for vehicle
+  	/*
+  	 for(int th=0;th<thr_upd.length;th++)
+  	 {
+  		 thr_upd[th].start();
+  		 
+  		 try {
+            	    Thread.sleep(1000);
+            	    System.out.println("thread sleeping");
+            	    continue;
+            	} catch(InterruptedException ex) {
+            	    Thread.currentThread().interrupt();
+            	}
+  	 }
+  	 */
+  /*	 while(!veh_q.isEmpty())
+  	 {
+  	 System.out.println(veh_q.element().entry_pos.x);
+  	 System.out.println(veh_q.element().entry_pos.y);
+  	 
+  	 System.out.println(veh_q.element().exit_pos.x);
+  	 System.out.println(veh_q.element().exit_pos.y);
+  	 veh_q.remove();
+  	 }
+  */	
+  		
+  	 Thread[] thr=new Thread[veh_q.size()];
+  	 
+  	 while(!veh_q.isEmpty())
+  	 {
+  		 //System.out.println("eneterd while");
+  		 for(int tr=0;tr<veh_q.size();tr++)
+  		 {
+  			
+  			 //System.out.println(veh_q.element().)
+  			 //System.out.println("thread created");
+  			 //System.out.println(veh_q.element().v_id);
+  			 //System.out.println(veh_q.element().entry_pos.x);
+  			 //System.out.println(veh_q.element().entry_pos.y);
+  		 thr[tr]=new Thread(new Vehicle(veh_q.element()));
+  		 thr[tr].start();
+  		 veh_q.remove();
+  		 		 
+  		 
+  		 }
+  	 }
+  		 
+  	 
+  	 
+  	 }
+  	 	
+  	 
+  	 		catch (Exception e) {
+  	 //System.err.println("Error:" + e.getMessage());
+  	 }		
+  	 
+  	 
+  	 
+  	
+  	
+  	 
+  		 
+  	  
+  }		
+}
