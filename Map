@@ -1,0 +1,235 @@
+
+public class Map
+{
+  
+public GridSquare[] list_entry_ps;
+public GridSquare[] list_exit_ps;
+public GridSquare[] pos;
+public GridSquare[] road_excl;
+     int nX=50;
+  int nY=50;
+  byte[][] map;
+  static int count=0;
+   int x1 = 0,y1=0,x2=0,y2=0;
+  public static int ex=0;
+
+public Map(byte[][] map,int nX,int nY)
+{
+  this.map=map;
+  this.nX=nX;
+  this.nY=nY;
+  pos=new GridSquare[nX*nY];
+  
+  for(int y=0; y<nY; y++)
+  	for(int x=0; x<nX; x++)
+  	{   
+  		
+  	//System.out.println("entered");				
+  			map[x][y] = 0;  // squares set to 0 are closed
+  			//System.out.println(map[x][y]);
+  			
+  	}
+}
+  
+  void createMap(Road[] r_obj) {
+   
+  System.out.println("entered create map");
+  
+    int cn;
+    int rc;
+    
+    road_excl=new GridSquare[50];
+    for(int rm=0;rm<r_obj.length;rm++)
+    {
+  	  System.out.println("road no" +rm);
+  	  //System.out.println("entered for");
+  	  if ((Math.abs(r_obj[rm].end_pos.getX()-r_obj[rm].start_pos.getX())) > (Math.abs(r_obj[rm].end_pos.getY()-r_obj[rm].start_pos.getY())))
+  				  
+  		  cn=(Math.abs(r_obj[rm].end_pos.getX()-r_obj[rm].start_pos.getX()))+1;
+  		else
+  			cn=(Math.abs(r_obj[rm].end_pos.getY()-r_obj[rm].start_pos.getY()))+1;
+  	  
+  	  map[r_obj[rm].start_pos.getX()][r_obj[rm].start_pos.getY()]=1;
+  	  pos[count]=new GridSquare(r_obj[rm].start_pos.getX(),r_obj[rm].start_pos.getY(),true);
+  		count++;
+  	  
+  	  //GridSquare[] r_pos_1=r_obj[rm].road_coordinates(r_obj[rm].start_pos,r_obj[rm].end_pos);
+  	  
+  	  
+  	  for(int rp=0;rp<cn;rp++)
+  	  {
+  		  map[r_obj[rm].road_coordinates_1[rp].getX()][r_obj[rm].road_coordinates_1[rp].getY()]=1;
+  		  map[r_obj[rm].road_coordinates_2[rp].getX()][r_obj[rm].road_coordinates_2[rp].getY()]=1;
+  		  map[r_obj[rm].road_coordinates_3[rp].getX()][r_obj[rm].road_coordinates_3[rp].getY()]=1;
+  		  map[r_obj[rm].road_coordinates_4[rp].getX()][r_obj[rm].road_coordinates_4[rp].getY()]=1;
+  		  
+  		  pos[count++]=new GridSquare(r_obj[rm].road_coordinates_1[rp].getX(),r_obj[rm].road_coordinates_1[rp].getY(),true);
+  		  pos[count++]=new GridSquare(r_obj[rm].road_coordinates_2[rp].getX(),r_obj[rm].road_coordinates_2[rp].getY(),true);
+  		  pos[count++]=new GridSquare(r_obj[rm].road_coordinates_3[rp].getX(),r_obj[rm].road_coordinates_3[rp].getY(),true);
+  		  pos[count++]=new GridSquare(r_obj[rm].road_coordinates_4[rp].getX(),r_obj[rm].road_coordinates_4[rp].getY(),true);
+  		  
+  			//count++;
+  			System.out.println("end of for");
+  			System.out.println("road no" +rm);
+  	  }  
+  		  
+  		 
+  	  }
+    
+    
+    
+    for(int rm=0;rm<r_obj.length;rm++)
+    {
+    
+       System.out.println("road no" +rm);
+  	  System.out.println("entered road exclude");
+  	  
+  	   		 				  
+  	  rc=rm+1;
+  	  
+  	  System.out.println(rc);
+  	  System.out.println(rm);
+  	  
+  	  
+  	  System.out.println("enetering outer roads"); 
+  	  
+  	   while(rc < r_obj.length)
+  	   {
+  		   
+  		   
+  		   		System.out.println("enetering parallel roads");   
+  		   		excl_coor(r_obj,r_obj[rm].road_coordinates_1,r_obj[rc].road_coordinates_4,rm,rc);
+  		   		excl_coor(r_obj,r_obj[rm].road_coordinates_1,r_obj[rc].road_coordinates_3,rm,rc);
+  		   		excl_coor(r_obj,r_obj[rm].road_coordinates_1,r_obj[rc].road_coordinates_2,rm,rc);
+  		   		excl_coor(r_obj,r_obj[rm].road_coordinates_1,r_obj[rc].road_coordinates_1,rm,rc);
+  		   		rc++;
+  	   }
+    }
+    
+  		   
+    }
+  
+  
+public void excl_coor(Road[] r_obj,GridSquare[] road_coor1,GridSquare[] road_coor2,int rm,int rc)
+  {
+  
+  
+int r1=road_coor1.length;
+int r4=road_coor2.length;
+
+//int dx=Math.abs((r_obj[rm].road_coordinates_1[r1-1].getX())-(r_obj[rc].road_coordinates_4[r4-1].getX()));
+//int dy=Math.abs((r_obj[rm].road_coordinates_1[r1-1].getY())-(r_obj[rc].road_coordinates_4[r4-1].getY()));
+
+
+
+if((road_coor1[r1-1].getX()) < (road_coor2[r4-1].getX()))
+{
+System.out.println("eneterd x if");
+x1=road_coor1[r1-1].getX() +1;
+y1=road_coor1[r1-1].getY();
+x2=road_coor2[r4-1].getX();
+y2=road_coor2[r4-1].getY();
+}
+else
+{ 
+System.out.println("eneterd  x else");
+x2=road_coor1[r1-1].getX();
+y2=road_coor1[r1-1].getY();
+x1=road_coor2[r4-1].getX()+1;
+y1=road_coor2[r4-1].getY();
+}
+
+while (x1<= x2)
+{
+System.out.println("enetred while");
+System.out.println("enetred inner if");  
+if(map[x1][y1]!=1)
+{
+map[x1][y1]=1;
+pos[count++]=new GridSquare(x1,y1,true);
+
+road_excl[ex]=new GridSquare(x1,y1,true);
+
+System.out.println(road_excl[ex].x);
+System.out.println(road_excl[ex].y);
+x1++;
+ex++;
+}
+else x1++;
+
+}
+
+
+if((road_coor1[r1-1].getY()) < (road_coor2[r4-1].getY()))
+{
+System.out.println("entred if for y");
+x1=road_coor1[r1-1].getX();
+y1=road_coor1[r1-1].getY()+1;
+x2=road_coor2[r4-1].getX();
+y2=road_coor2[r4-1].getY();
+}
+else
+{
+System.out.println("entred else for y");
+x2=road_coor1[r1-1].getX();
+y2=road_coor1[r1-1].getY();
+x1=road_coor2[r4-1].getX();
+y1=road_coor2[r4-1].getY()+1;
+
+
+}
+
+while (y1<=y2)
+{
+System.out.println("entered while");
+if(map[x1][y1]!=1)
+{
+System.out.println("eneterd if");
+System.out.println(x1);
+System.out.println(y1);
+System.out.println(x2);
+System.out.println(y2);
+System.out.println(ex);
+
+map[x1][y1]=1; 
+System.out.println("map assigned");
+pos[count++]=new GridSquare(x1,y1,true);
+road_excl[ex]=new GridSquare(x1,y1,true);
+System.out.println("map road assigned");
+
+System.out.println(road_excl[ex].x);
+System.out.println(road_excl[ex].y);
+y1++;
+ex++;
+
+}
+else
+y1++;
+
+}
+
+    
+
+}
+  
+  		
+  
+  
+  	public byte[][] showMap()
+  	{
+  		return map;
+  	}
+  	
+  	public GridSquare[] exclude_nodes()
+  	{
+  		return road_excl;
+  	}
+  	
+}
+
+
+  
+ 
+ 
+
+   
