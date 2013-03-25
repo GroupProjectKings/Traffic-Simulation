@@ -1,0 +1,426 @@
+
+import java.util.*;
+
+public class Road {
+  
+  public int noofroads;
+  private int nooftrflights;
+  public int road_id;
+  public GridSquare start_pos;
+  public GridSquare end_pos;
+  public double speed_lmt;
+  public  static int no_of_lanes;
+  public int traffic_light_id;
+  public int rd_with;
+  public String axis;
+  public GridSquare speed_limit_pos_start;
+  public GridSquare speed_limit_pos_end;
+  public GridSquare[] road_coordinates_1;
+  public GridSquare[] road_coordinates_2;
+  public GridSquare[] road_coordinates_3;
+  public GridSquare[] road_coordinates_4;
+  
+  //ArrayList traffic_Lightlist = new ArrayList();
+
+  GridSquare[] spd_lmt=new GridSquare[2];
+  GridSquare[] gd=new GridSquare[2];
+  
+  public Road()
+  {
+  	
+  }
+                
+   
+   
+  public Road(int roadid, int speed_lmt, GridSquare rd_start_pos, GridSquare rd_end_pos)
+  {
+  	
+  	this.road_id = roadid;
+  	traffic_light_id=roadid+1;
+  	start_pos = rd_start_pos;
+  	end_pos = rd_end_pos;
+  	this.speed_lmt=speed_lmt;
+  	no_of_lanes =4;	
+  	//traffic_light_id = t1.traffic_light_id;
+  	rd_with = 4;
+  	
+  	
+  	
+  			 
+  	if ((rd_start_pos.getX()!= rd_end_pos.getX()) && ((rd_start_pos.getX()< rd_end_pos.getX())))	
+  		
+  	{
+  		axis="xi";
+  		
+  		//System.out.println("entered if");
+  		road_coordinates_1=road_coordinates(rd_start_pos,rd_end_pos);
+  		road_coordinates_2=road_coordinates(new GridSquare(rd_start_pos.getX(),(rd_start_pos.getY()-1),true),new GridSquare(rd_end_pos.getX(),(rd_end_pos.getY()-1),true));
+  		road_coordinates_3=road_coordinates(new GridSquare(rd_start_pos.getX(),(rd_start_pos.getY()-2),true),new GridSquare(rd_end_pos.getX(),(rd_end_pos.getY()-2),true));
+  		road_coordinates_4=road_coordinates(new GridSquare(rd_start_pos.getX(),(rd_start_pos.getY()-3),true),new GridSquare(rd_end_pos.getX(),(rd_end_pos.getY()-3),true));
+  	}
+  	else if ((rd_start_pos.getX()!= rd_end_pos.getX()) && ((rd_start_pos.getX()> rd_end_pos.getX())))	
+  	{
+  		axis="xd";
+  		
+  		//System.out.println("entered if2");
+  		road_coordinates_1=road_coordinates(rd_start_pos,rd_end_pos);
+  		road_coordinates_2=road_coordinates(new GridSquare(rd_start_pos.getX(),(rd_start_pos.getY()+1),true),new GridSquare(rd_end_pos.getX(),(rd_end_pos.getY()+1),true));
+  		road_coordinates_3=road_coordinates(new GridSquare(rd_start_pos.getX(),(rd_start_pos.getY()+2),true),new GridSquare(rd_end_pos.getX(),(rd_end_pos.getY()+2),true));
+  		road_coordinates_4=road_coordinates(new GridSquare(rd_start_pos.getX(),(rd_start_pos.getY()+3),true),new GridSquare(rd_end_pos.getX(),(rd_end_pos.getY()+3),true));
+  		
+  	}
+  	else if ((rd_start_pos.getY()!= rd_end_pos.getY()) && ((rd_start_pos.getY()< rd_end_pos.getY())))
+  	{
+  		axis="yi";
+  		
+  		//System.out.println("entered else");
+  		road_coordinates_1=road_coordinates(rd_start_pos,rd_end_pos);
+  		road_coordinates_2=road_coordinates(new GridSquare((rd_start_pos.getX()+1),(rd_start_pos.getY()),true),new GridSquare((rd_end_pos.getX()+1),(rd_end_pos.getY()),true));
+  		road_coordinates_3=road_coordinates(new GridSquare((rd_start_pos.getX()+2),(rd_start_pos.getY()),true),new GridSquare((rd_end_pos.getX()+2),(rd_end_pos.getY()),true));
+  		road_coordinates_4=road_coordinates(new GridSquare((rd_start_pos.getX()+3),(rd_start_pos.getY()),true),new GridSquare((rd_end_pos.getX()+3),(rd_end_pos.getY()),true));
+  	}
+  	else if ((rd_start_pos.getY()!= rd_end_pos.getY()) && ((rd_start_pos.getY()> rd_end_pos.getY())))
+  	{
+  		axis="yd";
+  		
+  		//System.out.println("entered else if");
+  		road_coordinates_1=road_coordinates(rd_start_pos,rd_end_pos);
+  		road_coordinates_2=road_coordinates(new GridSquare((rd_start_pos.getX()-1),(rd_start_pos.getY()),true),new GridSquare((rd_end_pos.getX()-1),(rd_end_pos.getY()),true));
+  		road_coordinates_3=road_coordinates(new GridSquare((rd_start_pos.getX()-2),(rd_start_pos.getY()),true),new GridSquare((rd_end_pos.getX()-2),(rd_end_pos.getY()),true));
+  		road_coordinates_4=road_coordinates(new GridSquare((rd_start_pos.getX()-3),(rd_start_pos.getY()),true),new GridSquare((rd_end_pos.getX()-3),(rd_end_pos.getY()),true));
+  	}
+  	
+  	
+
+  	 gd=spd_lmt_pos(rd_start_pos,rd_end_pos);
+  	//System.out.println(gd[0].x);
+  	for(int rd=0;rd<gd.length;rd++)
+  	{
+  		speed_limit_pos_start=gd[0];
+  		speed_limit_pos_end=gd[1];
+  	}
+  	
+  		
+  	 			 
+  	//System.out.println("complete cons");		
+  			
+  }
+  	
+  	public GridSquare[] spd_lmt_pos(GridSquare rd_start_pos,GridSquare rd_end_pos)
+  	{
+  		//System.out.println("Hi");
+  		
+  		if(axis=="xi")
+  		{
+  			spd_lmt[0]=new GridSquare((rd_start_pos.getX()+1),(rd_start_pos.getY()+1),rd_start_pos.getState());
+  			//System.out.println(spd_lmt[0].x);
+  			//System.out.println(spd_lmt[0].y);
+  			spd_lmt[1]=new GridSquare((rd_end_pos.getX()-1),(rd_end_pos.getY()+1),rd_start_pos.getState());
+  			//System.out.println(spd_lmt[1].x);
+  			//System.out.println(spd_lmt[1].y);
+  		}
+  		else if (axis=="xd")
+  		{
+  			spd_lmt[0]=new GridSquare((rd_start_pos.getX()-1),(rd_start_pos.getY()-1),rd_start_pos.getState());
+  			//System.out.println(spd_lmt[0].x);
+  			//System.out.println(spd_lmt[0].y);
+  			spd_lmt[1]=new GridSquare((rd_end_pos.getX()+1),(rd_end_pos.getY()-1),rd_start_pos.getState());
+  			//System.out.println(spd_lmt[1].x);
+  			//System.out.println(spd_lmt[1].y);
+  		}
+  		else if (axis=="yi")
+  		{
+  			spd_lmt[0]=new GridSquare((rd_start_pos.getX()-1),(rd_start_pos.getY()+1),rd_start_pos.getState());
+  			//System.out.println(spd_lmt[0].x);
+  			//System.out.println(spd_lmt[0].y);
+  			spd_lmt[1]=new GridSquare((rd_end_pos.getX()-1),(rd_end_pos.getY()-1),rd_start_pos.getState());
+  			//System.out.println(spd_lmt[1].x);
+  			//System.out.println(spd_lmt[1].y);
+  		}
+  		else if (axis=="yd")
+  		{
+  			spd_lmt[0]=new GridSquare((rd_start_pos.getX()+1),(rd_start_pos.getY()-1),rd_start_pos.getState());
+  			//System.out.println(spd_lmt[0].x);
+  			//System.out.println(spd_lmt[0].y);
+  			spd_lmt[1]=new GridSquare((rd_end_pos.getX()+1),(rd_end_pos.getY()+1),rd_start_pos.getState());
+  			//System.out.println(spd_lmt[1].x);
+  			//System.out.println(spd_lmt[1].y);
+  			
+  		}
+  		
+  		//System.out.println("exit cons");
+  		
+  		return spd_lmt;
+  	}
+  	
+  	public GridSquare[] road_coordinates(GridSquare entry,GridSquare exit)
+  	{
+  		int j=0;
+  		int dx,dy,D,y,cnt,x;
+  		
+  		
+  		dx=Math.abs(exit.getX()-entry.getX());
+  		dy=Math.abs(exit.getY()-entry.getY());
+  	  
+  		if(dx>dy)
+  			cnt=dx+1;
+  		else cnt=dy+1;
+  		GridSquare[] rc=new GridSquare[cnt];
+  		rc[j]=new GridSquare(entry.getX(),entry.getY(),true);
+  	    
+  	    j++;
+  	if(entry.getX() != exit.getX())
+  		  {
+  		if (entry.getX()<exit.getX()) //x coordinate is different 
+  		{
+  							
+  			
+  		 //x coordinate is different 
+  	
+  			//System.out.println("entr road coor2");		
+
+  		  D = 2*dy - dx;
+  		  
+  		  y=entry.getY();
+
+  		  for (x=(entry.getX()+1);(x<=exit.getX());x++)
+  		  {
+  			  
+  		    if (D>0)
+  		    {
+  		    	
+  		      y = y+1;
+  		      	      
+  		      //plot(x,y)
+  		      D = D + (2*dy-2*dx);
+  		      		      
+  		    }
+  		    else
+  		    {
+  		 		   
+  		      D = D + (2*dy);
+  		     
+  		      
+  		    }
+  		    rc[j]=new GridSquare(x,y,true);
+  		    
+  		 		    j++;
+  		    		    
+  		  }
+  		}
+  		else
+  		{
+  			 D = 2*dy - dx;
+  			  
+  			  y=entry.getY();
+
+  			  for (x=(entry.getX()-1);(x>=exit.getX());x--)
+  			  {
+  				  
+  			    if (D>0)
+  			    {
+  			    	
+  			      y = y+1;
+  			      	      
+  			      //plot(x,y)
+  			      D = D + (2*dy-2*dx);
+  			      		      
+  			    }
+  			    else
+  			    {
+  			 		   
+  			      D = D + (2*dy);
+  			     
+  			      
+  			    }
+  			    rc[j]=new GridSquare(x,y,true);
+  			    //System.out.println(rc[j].x);
+  			    //System.out.println(rc[j].y);
+  			 		    j++;
+  			    		    
+  		      }
+  		  }
+  		  }
+  		else if(entry.getY()!=exit.getY())
+  		{
+  		  if (entry.getY() < exit.getY())
+  			  
+  		    {
+  			//System.out.println("entered else");
+  			
+  		  D = 2*dx - dy;
+  		  //System.out.println(dx);
+  			//System.out.println(dy);
+  			//System.out.println(D);
+  			
+  		  
+  		  x=entry.getX();
+
+  		  for (y=(entry.getY()+1);(y<=exit.getY());y++)
+  		  {
+  			  
+  		    if (D>0)
+  		    {
+  		    	//System.out.println("D is positive");
+  		    	
+  		      x = x+1;
+  		      	      
+  		      //plot(x,y)
+  		      D = D + (2*dx-2*dy);
+  		      		      
+  		    }
+  		    else
+  		    {
+  		    	//System.out.println("D is negetive");
+  		 		   
+  		      D = D + (2*dx);
+  		     
+  		      
+  		    }
+  		    rc[j]=new GridSquare(x,y,true);
+  		    //System.out.println(rc[j].x);
+  		    //System.out.println(rc[j].y);
+  		    
+  		 		    j++;
+  		    		    
+  		  }
+  		}
+  		
+  		  
+  		else
+  		{
+  			//System.out.println("entr road coory");
+  			 D = 2*dx - dy;
+  			  //System.out.println(dx);
+  				//System.out.println(dy);
+  				//System.out.println(D);
+  				
+  			  
+  			  x=entry.getX();
+
+  			  for (y=(entry.getY()-1);(y>=exit.getY());y--)
+  			  {
+  				  //System.out.println("entr road coory2");
+  			    if (D>0)
+  			    {
+  			    	//System.out.println("D is positive");
+  			    	
+  			      x = x+1;
+  			      	      
+  			      //plot(x,y)
+  			      D = D + (2*dx-2*dy);
+  			      		      
+  			    }
+  			    else
+  			    {
+  			    	//System.out.println("D is negetive");
+  			 		   
+  			      D = D + (2*dx);
+  			     
+  			      
+  			    }
+  			    rc[j]=new GridSquare(x,y,true);
+  			    
+  			    
+  			 		    j++;
+  			 		  // System.out.println("hello1");
+  			    		    
+  			
+  		}
+  		
+  			 // System.out.println("hello2");
+  			  
+  	}
+  		  //System.out.println("hello3");
+  		}
+  		else
+  		{
+  			
+  		}
+  		//System.out.println("hello");
+  		return rc; 	
+  	
+  	}
+
+  	public String spd_Limit_Check(GridSquare v_curr_pos,GridSquare spd_lmt_start_pos,GridSquare spd_lmt_end_pos,String axis)
+  	{
+  		if(axis=="xi")
+  		 {
+  		   if(((v_curr_pos.getX()==spd_lmt_start_pos.getX()) &&((v_curr_pos.getY()+1)==spd_lmt_start_pos.getY())) || ((v_curr_pos.getX()==spd_lmt_start_pos.getX()) &&((v_curr_pos.getY()+1)==spd_lmt_start_pos.getY())))
+  		   {
+  			   
+  			   System.out.println("vehicle  should decelerated in xi");
+  			   return "dec";
+  		   }
+  		   
+  		   else
+  		   {
+  			   if(((v_curr_pos.getX()==spd_lmt_end_pos.getX()) &&((v_curr_pos.getY()+1)==spd_lmt_end_pos.getY())) || ((v_curr_pos.getX()==spd_lmt_end_pos.getX()) &&((v_curr_pos.getY()+2)==spd_lmt_end_pos.getY())))
+  			   {
+  				   
+  				   System.out.println("vehicle  should accelerate in xi");
+  				   return "acc";
+  			   } 
+  		   }
+  		 }
+  		else if (axis=="xd")
+  		{
+  			if(((v_curr_pos.getX()==spd_lmt_start_pos.getX()) &&((v_curr_pos.getY()-1)==spd_lmt_start_pos.getY())) || ((v_curr_pos.getX()==spd_lmt_start_pos.getX()) &&((v_curr_pos.getY()-2)==spd_lmt_start_pos.getY())))
+  			   {
+  				   
+  				   System.out.println("vehicle  should decelerated in xd");
+  				   return "dec";
+  			   }
+  			   else
+  			   {
+  				   if(((v_curr_pos.getX()==spd_lmt_end_pos.getX()) &&((v_curr_pos.getY()-1)==spd_lmt_end_pos.getY())) || ((v_curr_pos.getX()==spd_lmt_end_pos.getX()) &&((v_curr_pos.getY()-1)==spd_lmt_end_pos.getY())))
+  				   {
+  					   
+  					   System.out.println("vehicle  should accelerate in xd");
+  					   return "acc";
+  				   } 
+  			   }
+  		}
+  		else if (axis=="yi")
+  		{
+  			if((((v_curr_pos.getX()-1)==spd_lmt_start_pos.getX()) &&(v_curr_pos.getY()==spd_lmt_start_pos.getY())) || (((v_curr_pos.getX()-2)==spd_lmt_start_pos.getX()) &&(v_curr_pos.getY()==spd_lmt_start_pos.getY())))
+  			   {
+  				   
+  				   System.out.println("vehicle  should decelerated in yi");
+  				   return "dec";
+  			   }
+  			   else
+  			   {
+  				   if((((v_curr_pos.getX()-1)==spd_lmt_end_pos.getX()) &&(v_curr_pos.getY()==spd_lmt_end_pos.getY())) ||(((v_curr_pos.getX()-2)==spd_lmt_end_pos.getX()) &&(v_curr_pos.getY()==spd_lmt_end_pos.getY())))
+  				   {
+  					   
+  					   System.out.println("vehicle  should accelerate in yi");
+  					   return "acc";
+  				   } 
+  			   }
+  		}
+  		else if (axis=="yd")
+  		{
+  			if((((v_curr_pos.getX()+1)==spd_lmt_start_pos.getX()) &&(v_curr_pos.getY()==spd_lmt_start_pos.getY())) || (((v_curr_pos.getX()+2)==spd_lmt_start_pos.getX()) &&(v_curr_pos.getY()==spd_lmt_start_pos.getY())))
+  			   {
+  				   
+  				   System.out.println("vehicle  should decelerated in yd");
+  				   return "dec";
+  			   }
+  			   else
+  			   {
+  				   if((((v_curr_pos.getX()+1)==spd_lmt_end_pos.getX()) &&(v_curr_pos.getY()==spd_lmt_end_pos.getY())) ||(((v_curr_pos.getX()+2)==spd_lmt_end_pos.getX()) &&(v_curr_pos.getY()==spd_lmt_end_pos.getY())))
+  				   {
+  					   
+  					   System.out.println("vehicle  should accelerate in yd");
+  					   return "acc";
+  				   } 
+  			   }
+  		}
+  		return "nc";
+  		   
+  	}
+}
+  
+  
+
